@@ -1,0 +1,18 @@
+name: DrakesArcana
+version: 0.1.0
+main: cl.drakescraft.arcana.DrakesArcanaPlugin
+api-version: '1.21.11'
+authors: [JackStar]
+description: Magia elemental, dominios visuales y progresion survival para DrakesCraft.
+softdepend: [DiosesDrakes, ElementManipulation, ProtectionStones, WorldGuard, AuraSkills]
+commands:
+  arcana:
+    aliases: [arc, magia]
+    description: Códice y habilidades de DrakesArcana.
+    usage: /arcana [info|book|cast|staff]
+permissions:
+  drakesarcana.use:
+    default: true
+  drakesarcana.staff:
+    default: op
+

@@ -1,0 +1,11 @@
+worlds:
+  offensive-enabled: [world, boss_arena]
+  player-vs-player: false
+effects:
+  maximum-concurrent-domains: 6
+  pulse-cooldown-seconds: 20
+  domain-cooldown-seconds: 180
+  domain-duration-seconds: 8
+messages:
+  prefix: '&8[&dArcana&8] '
+
