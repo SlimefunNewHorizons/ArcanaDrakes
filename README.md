@@ -41,6 +41,7 @@ Origins are a gameplay identity, not a permanent creature disguise. **Light** an
 | Codex | Players can obtain an in-game reference book for their Arcana identity. |
 | Pulse | Short-range elemental projectile with particles, hit feedback and a configurable cooldown. |
 | Domain | An eight-second area ultimate with a global concurrency budget, telegraph circle, sound and configurable cooldown. |
+| Spirituality | `/arcana meditate` grants bounded Arcana Essence, experience and Sigils; `/arcana spirit` explains the active resonance. |
 | Boss compatibility | Offensive spells are permitted in Odysseia's `boss_arena` when enabled in configuration. |
 | Ranks | Public ladder: Awakening, Explorer, Catalyst, Vanguard, Ascended and Archon. |
 | Mines, traders and gear | Configuration contract and progression policy are present; the related gameplay modules are expanded incrementally rather than shipped as untested endgame content. |
@@ -56,6 +57,17 @@ Origins are a gameplay identity, not a permanent creature disguise. **Light** an
 | `/arcana staff set <player> <affinity>` | Staff-only affinity correction and testing. |
 
 Permissions, claims and configured worlds remain the final authority. Do not expose the staff command to ordinary players.
+
+## Spirituality and DiosesDrakes
+
+Arcana spirituality is a bridge between an elemental identity and a player's divine path, not a second pantheon economy.
+
+1. **Meditation**: `/arcana meditate` is a cooldown-bound ritual that grants Arcana-only Essence, experience and Sigils. It creates an enchantment effect and sound, but no blocks, entities, containers or claim changes.
+2. **Patron resonance**: when the optional `DiosesDrakes` public service is available, Arcana reads the selected patron and current favor. A compatible affinity/patron pairing applies the modest multiplier configured under `spirituality.resonance`.
+3. **No favor minting**: Arcana never writes to the DiosesDrakes database, awards divine favor, spends favor, or changes a patron. Bosses and Convergence remain DiosesDrakes/Odysseia territory.
+4. **Graceful fallback**: if DiosesDrakes is missing, disabled, or has no selected patron for a player, meditation remains available at its base reward.
+
+Compatibility is intentionally data-driven. Server operators can map any deity to any primary affinity in `config.yml` without compiling Arcana again.
 
 ## Safety model
 
@@ -78,6 +90,7 @@ The main operational file is `plugins/DrakesArcana/config.yml`. It groups the va
 | `combat` | Offensive worlds, PvP policy, monster-only targeting, base Pulse/Domain values. |
 | `effects` | Cooldowns, domain duration, concurrency and particle budgets. |
 | `progression` | Rank thresholds, sigil policy and weekly-maintenance switch. |
+| `spirituality` | Meditation cooldown/rewards, Essence ceiling and compatible deity resonance. |
 | `mines` | Mine world, regeneration cadence, reward rates and safe ore palette. |
 | `traders` | Sigil trader policy and refresh cadence. |
 | `equipment` | Rank gates and material-only crafting tiers. |

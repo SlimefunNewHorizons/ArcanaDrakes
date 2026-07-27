@@ -50,6 +50,29 @@ progression:
     death-loss-percent: 0
     weekly-upkeep-enabled: false
 
+spirituality:
+  enabled: true
+  # Essence belongs only to Arcana. It never mints, transfers or spends DiosesDrakes favor.
+  maximum-spirit: 10000
+  meditation:
+    cooldown-seconds: 300
+    base-experience: 40
+    base-spirit: 12
+    base-sigils: 1
+  resonance:
+    # Compatible patrons grant a modest Arcana-only meditation bonus. Every value is live-balanceable here.
+    compatible-base-multiplier: 1.10
+    favor-per-tier: 100
+    maximum-favor-tiers: 3
+    bonus-per-favor-tier: 0.05
+    compatible-gods:
+      FIRE: [ZEUS, APOLLO, HEPHAESTUS, HESTIA, RA, SET, BRIGID, LUGH]
+      EARTH: [DEMETER, HADES, PERSEPHONE, RHEA, DAGDA, CERNUNNOS, ANUBIS]
+      AIR: [HERMES, ARTEMIS, ODIN, HEIMDALL, HORUS, MORRIGAN]
+      WATER: [POSEIDON, OCEANUS, TETHYS, ISIS, BASTET]
+      ICE: [SELENE, MORPHEUS, ODIN, ANUBIS, MORRIGAN]
+      ELECTRO: [ZEUS, THOR, TYR, HORUS, LUGH]
+
 mines:
   enabled: true
   world: arcana_mines

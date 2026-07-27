@@ -7,6 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DrakesArcanaPlugin extends JavaPlugin {
     private ArcanaRepository repository;
     private ArcanaEffects effects;
+    private DivineBridge divine;
+    private SpiritualityService spirituality;
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -16,11 +18,13 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
             throw new IllegalStateException("No se pudo abrir la base de datos de Arcana", exception);
         }
         effects = new ArcanaEffects(this);
-        ArcanaCommand command = new ArcanaCommand(this, repository, effects);
+        divine = new DivineBridge(this);
+        spirituality = new SpiritualityService(this, divine);
+        ArcanaCommand command = new ArcanaCommand(this, repository, effects, spirituality, divine);
         Objects.requireNonNull(getCommand("arcana")).setExecutor(command);
         Objects.requireNonNull(getCommand("arcana")).setTabCompleter(command);
         getServer().getPluginManager().registerEvents(new ArcanaJoinListener(this, repository), this);
-        getLogger().info("DrakesArcana listo: afinidades, codex y dominios seguros.");
+        getLogger().info("DrakesArcana ready: affinities, codex, safe domains and spirituality.");
     }
 
     @Override public void onDisable() {
