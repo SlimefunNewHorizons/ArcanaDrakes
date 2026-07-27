@@ -25,27 +25,30 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
     private final ArcanaEffects effects;
     private final SpiritualityService spirituality;
     private final DivineBridge divine;
+    private final ArcanaGuideMenu guide;
 
     ArcanaCommand(DrakesArcanaPlugin plugin, ArcanaRepository repository, ArcanaEffects effects,
-                  SpiritualityService spirituality, DivineBridge divine) {
+                  SpiritualityService spirituality, DivineBridge divine, ArcanaGuideMenu guide) {
         this.plugin = plugin;
         this.repository = repository;
         this.effects = effects;
         this.spirituality = spirituality;
         this.divine = divine;
+        this.guide = guide;
     }
 
     @Override public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender instanceof Player player)) { sender.sendMessage("Only players can use Arcana."); return true; }
         try {
             ArcanaProfile profile = repository.findOrAssign(player.getUniqueId());
-            if (args.length == 0 || args[0].equalsIgnoreCase("info")) return info(player, profile);
+            if (args.length == 0 || args[0].equalsIgnoreCase("guide") || args[0].equalsIgnoreCase("menu")) { guide.open(player); return true; }
+            if (args[0].equalsIgnoreCase("info")) return info(player, profile);
             if (args[0].equalsIgnoreCase("book")) return book(player, profile);
             if (args[0].equalsIgnoreCase("spirit")) return spirit(player, profile);
             if (args[0].equalsIgnoreCase("meditate")) return meditate(player, profile);
             if (args[0].equalsIgnoreCase("cast") && args.length >= 2) return cast(player, profile, args[1]);
             if (args[0].equalsIgnoreCase("staff") && args.length >= 4 && args[1].equalsIgnoreCase("set")) return setAffinity(player, args[2], args[3]);
-            player.sendMessage(colour(plugin.message("&f/arcana info&7, &f/arcana spirit&7, &f/arcana meditate&7, &f/arcana book&7, &f/arcana cast <pulse|domain>")));
+            player.sendMessage(colour(plugin.message("&f/arcana&7 opens the guide. &f/arcana info&7, &f/arcana spirit&7, &f/arcana meditate&7, &f/arcana book&7, &f/arcana cast <pulse|domain>")));
         } catch (SQLException exception) {
             player.sendMessage(ChatColor.RED + "Arcana could not read your profile.");
             plugin.getLogger().warning(exception.getMessage());
@@ -121,7 +124,7 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        if (args.length == 1) return filter(args[0], List.of("info", "spirit", "meditate", "book", "cast", "staff"));
+        if (args.length == 1) return filter(args[0], List.of("guide", "info", "spirit", "meditate", "book", "cast", "staff"));
         if (args.length == 2 && args[0].equalsIgnoreCase("cast")) return filter(args[1], List.of("pulse", "domain"));
         if (args.length == 2 && args[0].equalsIgnoreCase("staff")) return filter(args[1], List.of("set"));
         if (args.length == 3 && args[0].equalsIgnoreCase("staff")) return filter(args[2], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList());

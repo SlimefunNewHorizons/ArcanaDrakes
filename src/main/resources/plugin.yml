@@ -9,10 +9,9 @@ commands:
   arcana:
     aliases: [arc, magia]
     description: Códice y habilidades de DrakesArcana.
-    usage: /arcana [info|book|cast|staff]
+    usage: /arcana [guide|info|spirit|meditate|book|cast|staff]
 permissions:
   drakesarcana.use:
     default: true
   drakesarcana.staff:
     default: op
-

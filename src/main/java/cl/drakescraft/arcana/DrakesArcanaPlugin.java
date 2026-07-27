@@ -9,6 +9,7 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
     private ArcanaEffects effects;
     private DivineBridge divine;
     private SpiritualityService spirituality;
+    private ArcanaGuideMenu guide;
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -20,10 +21,12 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
         effects = new ArcanaEffects(this);
         divine = new DivineBridge(this);
         spirituality = new SpiritualityService(this, divine);
-        ArcanaCommand command = new ArcanaCommand(this, repository, effects, spirituality, divine);
+        guide = new ArcanaGuideMenu(this, repository, divine, spirituality);
+        ArcanaCommand command = new ArcanaCommand(this, repository, effects, spirituality, divine, guide);
         Objects.requireNonNull(getCommand("arcana")).setExecutor(command);
         Objects.requireNonNull(getCommand("arcana")).setTabCompleter(command);
         getServer().getPluginManager().registerEvents(new ArcanaJoinListener(this, repository), this);
+        getServer().getPluginManager().registerEvents(guide, this);
         getLogger().info("DrakesArcana ready: affinities, codex, safe domains and spirituality.");
     }
 

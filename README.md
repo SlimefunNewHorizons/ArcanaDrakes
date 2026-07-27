@@ -50,6 +50,8 @@ Origins are a gameplay identity, not a permanent creature disguise. **Light** an
 
 | Command | Purpose |
 | --- | --- |
+| `/arcana` | Opens the interactive Arcana Guide with the current profile and safe action buttons. |
+| `/arcana guide` | Reopens the interactive guide. |
 | `/arcana info` | Shows the current affinity, origin and disciplines. |
 | `/arcana book` | Gives the Arcana Codex. |
 | `/arcana cast pulse` | Casts the short-range PvE Pulse. |
