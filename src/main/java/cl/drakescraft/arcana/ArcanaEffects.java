@@ -78,7 +78,12 @@ final class ArcanaEffects {
         return true;
     }
 
-    private boolean canUseOffensively(Player player) { return plugin.getConfig().getStringList("worlds.offensive-enabled").contains(player.getWorld().getName()); }
+    private boolean canUseOffensively(Player player) {
+        List<String> worlds = plugin.getConfig().getStringList("combat.offensive-worlds");
+        // Keep old installations working while administrators migrate their config.
+        if (worlds.isEmpty()) worlds = plugin.getConfig().getStringList("worlds.offensive-enabled");
+        return worlds.contains(player.getWorld().getName());
+    }
     private boolean ready(Player player, String spell, long seconds) {
         String key = player.getUniqueId() + ":" + spell;
         long now = System.currentTimeMillis();

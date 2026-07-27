@@ -1,11 +1,111 @@
-worlds:
-  offensive-enabled: [world, boss_arena]
-  player-vs-player: false
+# DrakesArcana operational configuration.
+# Tune values here and restart the server. Secrets and external service credentials do not belong here.
+
+profiles:
+  assign-random-affinity-on-first-join: true
+  allow-staff-affinity-correction: true
+  available-affinities: [FIRE, EARTH, AIR, WATER, ICE, ELECTRO]
+  origins:
+    FIRE: [PHOENIX, BLAZE]
+    EARTH: [IRON_GUARDIAN, RAVAGER]
+    AIR: [BREEZE, PHANTOM]
+    WATER: [GUARDIAN, DROWNED]
+    ICE: [STRAY, SNOW_GUARDIAN]
+    ELECTRO: [ENDER_WALKER, STORM_CALLER]
+
+combat:
+  # Arcana remains PvE-only until a deliberately configured divine PvP area exists.
+  offensive-worlds: [world, boss_arena]
+  allow-player-vs-player: false
+  monsters-only: true
+  respect-claims: true
+  respect-worldguard: true
+  pulse:
+    damage: 4.0
+    range: 10
+    knockback: 0.32
+  domain:
+    radius: 7.0
+    damage-per-tick: 0.7
+
 effects:
   maximum-concurrent-domains: 6
   pulse-cooldown-seconds: 20
   domain-cooldown-seconds: 180
   domain-duration-seconds: 8
+  particles-per-pulse-step: 4
+  domain-points: 28
+
+progression:
+  # Canonical tuning values for the public ladder and future mine/quest rewards.
+  ranks:
+    DESPERTAR: 0
+    EXPLORADOR: 1000
+    CATALIZADOR: 5000
+    VANGUARDIA: 15000
+    ASCENDIDO: 40000
+    ARCONTE: 100000
+  sigils:
+    enabled: true
+    death-loss-percent: 0
+    weekly-upkeep-enabled: false
+
+mines:
+  enabled: true
+  world: arcana_mines
+  regenerate-seconds: 600
+  entry-rank: DESPERTAR
+  rewards:
+    experience-per-ore: 8
+    sigils-per-ore: 1
+  # The mine generator consumes this palette as its implementation evolves.
+  # No premium Slimefun, Infinity, Supreme, armor, weapons, or direct endgame items belong here.
+  palette:
+    common: [COAL_ORE, COPPER_ORE, IRON_ORE]
+    uncommon: [GOLD_ORE, REDSTONE_ORE, LAPIS_ORE]
+    rare: [DIAMOND_ORE, EMERALD_ORE, AMETHYST_BLOCK]
+
+traders:
+  enabled: true
+  villager-name: '&dArcane Quartermaster'
+  currency: SIGILS
+  allow-player-trading: false
+  refresh-seconds: 1800
+  # Intended for components and exploration materials, never finished Infinity/Supreme gear.
+  catalog-mode: MATERIALS_AND_COMPONENTS
+
+equipment:
+  enabled: true
+  require-rank: true
+  allow-direct-purchase: false
+  tiers:
+    runic:
+      minimum-rank: CATALIZADOR
+      base-material: DIAMOND
+    astral:
+      minimum-rank: ASCENDIDO
+      base-material: NETHERITE
+
+integrations:
+  odysseia:
+    enabled: true
+    allow-boss-arena: true
+  dioses-drakes:
+    enabled: true
+  aura-skills:
+    enabled: true
+    duplicate-experience: false
+  element-manipulation:
+    enabled: true
+    duplicate-items: false
+  protectionstones:
+    enabled: true
+  worldguard:
+    enabled: true
+
+# Legacy aliases retained for older generated configs. New installs use combat.*.
+worlds:
+  offensive-enabled: [world, boss_arena]
+  player-vs-player: false
 messages:
   prefix: '&8[&dArcana&8] '
-

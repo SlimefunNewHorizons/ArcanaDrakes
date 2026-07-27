@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" role="img" aria-labelledby="title desc">
+  <title id="title">ArcanaDrakes</title>
+  <desc id="desc">Animated elemental arcana banner for DrakesCraft.</desc>
+  <rect width="1600" height="420" fill="#090817"/>
+  <path d="M0 330H1600M0 92H1600" stroke="#d5ab47" stroke-width="2" opacity=".7"/>
+  <g fill="none" stroke="#51339a" stroke-width="2" opacity=".55">
+    <path d="M80 210h150m-75-75v150M1370 210h150m-75-75v150"/>
+    <circle cx="190" cy="210" r="100"/><circle cx="1410" cy="210" r="100"/>
+  </g>
+  <g fill="none" stroke="#d5ab47" stroke-width="3" stroke-linecap="round">
+    <circle cx="800" cy="210" r="128" stroke-dasharray="10 16">
+      <animateTransform attributeName="transform" type="rotate" from="0 800 210" to="360 800 210" dur="22s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="800" cy="210" r="92" stroke="#8c5cf6" stroke-dasharray="4 12">
+      <animateTransform attributeName="transform" type="rotate" from="360 800 210" to="0 800 210" dur="15s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <g>
+    <circle cx="800" cy="82" r="7" fill="#ff714b"><animate attributeName="r" values="5;9;5" dur="2.2s" repeatCount="indefinite"/></circle>
+    <circle cx="910" cy="145" r="7" fill="#d5ab47"><animate attributeName="r" values="5;9;5" dur="2.6s" repeatCount="indefinite"/></circle>
+    <circle cx="910" cy="275" r="7" fill="#4dcbff"><animate attributeName="r" values="5;9;5" dur="2.1s" repeatCount="indefinite"/></circle>
+    <circle cx="800" cy="338" r="7" fill="#b4f06b"><animate attributeName="r" values="5;9;5" dur="2.8s" repeatCount="indefinite"/></circle>
+    <circle cx="690" cy="275" r="7" fill="#b78cff"><animate attributeName="r" values="5;9;5" dur="2.4s" repeatCount="indefinite"/></circle>
+    <circle cx="690" cy="145" r="7" fill="#f2f6ff"><animate attributeName="r" values="5;9;5" dur="2s" repeatCount="indefinite"/></circle>
+  </g>
+  <g text-anchor="middle" font-family="Georgia, serif">
+    <text x="800" y="205" fill="#f5f0df" font-size="66" letter-spacing="4">ARCANA</text>
+    <text x="800" y="248" fill="#d5ab47" font-family="Arial, sans-serif" font-size="18" letter-spacing="7">DRAKESCRAFT ELEMENTAL PROGRESSION</text>
+  </g>
+  <g fill="#8c5cf6" opacity=".9">
+    <circle cx="390" cy="130" r="3"><animate attributeName="opacity" values=".1;1;.1" dur="3s" repeatCount="indefinite"/></circle>
+    <circle cx="1210" cy="290" r="3"><animate attributeName="opacity" values="1;.1;1" dur="3.5s" repeatCount="indefinite"/></circle>
+    <circle cx="310" cy="300" r="2"><animate attributeName="opacity" values=".1;1;.1" dur="2.7s" repeatCount="indefinite"/></circle>
+    <circle cx="1280" cy="120" r="2"><animate attributeName="opacity" values="1;.1;1" dur="2.9s" repeatCount="indefinite"/></circle>
+  </g>
+</svg>

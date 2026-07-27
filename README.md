@@ -1,37 +1,111 @@
-# DrakesArcana
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/ArcanaDrakes/main/assets/arcana-banner.svg" width="100%" alt="ArcanaDrakes animated banner" />
+</p>
 
-Magia elemental y progresión survival de DrakesCraft para Paper/Purpur 1.21.11.
+# ArcanaDrakes
 
-## Alcance inicial
+**Elemental progression for DrakesCraft, built for Paper/Purpur 1.21.11.** Arcana gives survival players a parallel path based on exploration, controlled spell spectacle, ranks, sigils, mines, and material progression without turning Slimefun endgame items into shop currency.
 
-- Seis afinidades primarias aleatorias: Fuego, Tierra, Aire, Agua, Hielo y Electro.
-- Un origen aleatorio ligado a la afinidad: Fénix/Blaze, Guardianes, Breeze/Phantom, Guardianes marinos, Stray o Caminante Ender, sin disfraces permanentes ni copia de criaturas.
-- Luz y Sombra nacen como disciplinas avanzadas desde el lanzamiento, no como un séptimo u octavo sorteo.
-- Persistencia SQLite, corrección de afinidad por staff, rangos, experiencia, Sigilos y Códice entregable.
-- Pulso y Dominio como base visual: trayectorias, ondas, telegráficos, sonido y partículas sin modificar bloques.
-- Daño solo contra monstruos en `world` y `boss_arena`; nunca contra jugadores mientras el PvP Arcana esté desactivado.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-21-ea8b23?style=flat-square" alt="Java 21" />
+  <img src="https://img.shields.io/badge/Platform-Paper%20%2F%20Purpur%201.21.11-4b8bbe?style=flat-square" alt="Paper Purpur 1.21.11" />
+  <img src="https://img.shields.io/badge/Combat-Claim%20safe-8b5cf6?style=flat-square" alt="Claim safe" />
+</p>
 
-## Comandos
+## Design principles
 
-| Comando | Uso |
+- **Every player starts different.** A first join assigns one primary affinity and one compatible origin at random. Staff can correct a bad roll through a restricted command.
+- **Spectacle without griefing.** Spells use particles, telegraphs, sound and bounded entity damage. They never place, break, replace, move, or ignite blocks.
+- **A survival complement, not an item dupe.** Arcana rewards exploration materials, sigils and progression. It does not sell finished Infinity, Supreme, top-tier Slimefun weapons, armor, or machines.
+- **Claims are sacred.** Offensive effects are PvE-only by default and only in configured worlds. A future Arcana PvP zone must be deliberately enabled, not accidentally inherited from survival.
+- **Configuration first.** Cooldowns, worlds, damage targets, mine rewards, trader policy and future equipment gates live in `config.yml`, so normal balancing does not require a new build.
+
+## Affinities and origins
+
+| Affinity | Origins | Identity |
+| --- | --- | --- |
+| Fire | Phoenix, Blaze | Pressure, embers and explosive momentum. |
+| Earth | Iron Guardian, Ravager | Fortitude, terrain resonance and controlled force. |
+| Air | Breeze, Phantom | Mobility, gusts and evasive movement. |
+| Water | Guardian, Drowned | Flow, recovery and pressure. |
+| Ice | Stray, Snow Guardian | Restraint, precision and cold control. |
+| Electro | Ender Walker, Storm Caller | Charges, blink-like movement and storm impact. |
+
+Origins are a gameplay identity, not a permanent creature disguise. **Light** and **Shadow** are advanced disciplines earned through progression rather than extra random starting rolls.
+
+## Current gameplay surface
+
+| Feature | Status |
 | --- | --- |
-| `/arcana info` | Muestra afinidad y disciplinas. |
-| `/arcana book` | Entrega el Códice. |
-| `/arcana cast pulso` | Ataque visual de corto alcance. |
-| `/arcana cast dominio` | Ultimate de área con cooldown. |
-| `/arcana staff set <jugador> <afinidad>` | Corrección y pruebas de staff. |
+| Persistent profiles | SQLite records affinity, origin, experience and sigils per UUID. |
+| Codex | Players can obtain an in-game reference book for their Arcana identity. |
+| Pulse | Short-range elemental projectile with particles, hit feedback and a configurable cooldown. |
+| Domain | An eight-second area ultimate with a global concurrency budget, telegraph circle, sound and configurable cooldown. |
+| Boss compatibility | Offensive spells are permitted in Odysseia's `boss_arena` when enabled in configuration. |
+| Ranks | Public ladder: Awakening, Explorer, Catalyst, Vanguard, Ascended and Archon. |
+| Mines, traders and gear | Configuration contract and progression policy are present; the related gameplay modules are expanded incrementally rather than shipped as untested endgame content. |
 
-## Límites de seguridad
+## Commands
 
-Arcana no rompe ni coloca bloques. Los dominios tienen presupuesto global, cooldown y duración corta. La integración con ProtectionStones y WorldGuard será de denegación por defecto antes de habilitar PvP Arcana en claims.
+| Command | Purpose |
+| --- | --- |
+| `/arcana info` | Shows the current affinity, origin and disciplines. |
+| `/arcana book` | Gives the Arcana Codex. |
+| `/arcana cast pulse` | Casts the short-range PvE Pulse. |
+| `/arcana cast domain` | Casts the area Domain ultimate. |
+| `/arcana staff set <player> <affinity>` | Staff-only affinity correction and testing. |
 
-## Integraciones
+Permissions, claims and configured worlds remain the final authority. Do not expose the staff command to ordinary players.
 
-- **DiosesDrakes:** lore, bendiciones y afinidades de panteón mediante API, no dependencia dura.
-- **Odysseia:** `boss_arena` acepta hechizos ofensivos para los bosses de `/bosswarp`.
-- **ElementManipulation:** permanece como addon Slimefun independiente y fuente de referencia; Arcana no duplica sus ítems.
-- **AuraSkills:** estadísticas base, sin duplicar experiencia.
+## Safety model
 
-## Progresión survival
+Arcana damage is intentionally conservative:
 
-Arcana tendrá Minas Arcanas regenerables por capas, con bloques temporales y recompensas de experiencia/Sigilos. Los aldeanos arcanos usarán Sigilos y materiales de exploración para intercambiar mejoras. El equipo por encima de netherite se construirá por piezas, con requisitos de rango y costes; nunca aparecerá como compra directa ni reemplazará el endgame de Slimefun.
+- By default, it targets monsters only.
+- It is active only in `world` and Odysseia's `boss_arena`.
+- Player-versus-player Arcana is disabled.
+- Domains have duration, cooldown and global concurrency limits.
+- Visual effects do not alter blocks, containers, machines, claims or protection flags.
+- ProtectionStones and WorldGuard are declared integration boundaries before any future claim-aware PvP mode is enabled.
+
+## Configuration
+
+The main operational file is `plugins/DrakesArcana/config.yml`. It groups the values administrators are likely to balance:
+
+| Section | Examples |
+| --- | --- |
+| `profiles` | Random first-join assignment, allowed affinities and compatible origins. |
+| `combat` | Offensive worlds, PvP policy, monster-only targeting, base Pulse/Domain values. |
+| `effects` | Cooldowns, domain duration, concurrency and particle budgets. |
+| `progression` | Rank thresholds, sigil policy and weekly-maintenance switch. |
+| `mines` | Mine world, regeneration cadence, reward rates and safe ore palette. |
+| `traders` | Sigil trader policy and refresh cadence. |
+| `equipment` | Rank gates and material-only crafting tiers. |
+| `integrations` | Odysseia, DiosesDrakes, AuraSkills, ElementManipulation and protection bridges. |
+
+Edit the values, retain YAML indentation, then restart during a maintenance window. A configuration reload command can be added once every subsystem owns safe reload semantics; until then, a restart avoids half-reloaded gameplay state.
+
+## Integrations
+
+- **Odysseia**: `boss_arena` is a sanctioned combat world for bosses and Arcana effects.
+- **DiosesDrakes**: divine lore and blessings may enrich Arcana through an optional API, never a hard boot dependency.
+- **AuraSkills**: remains the base-stat system. Arcana does not duplicate AuraSkills experience.
+- **ElementManipulation**: stays an independent Slimefun addon and implementation reference; Arcana does not copy its item catalog.
+- **ProtectionStones / WorldGuard**: claim-aware boundaries for future PvP and effect permissions.
+
+## Build and test
+
+```bash
+mvn test
+mvn package
+```
+
+The deployable JAR is produced under `target/`. Build success is not deployment verification: before replacing anything on a live server, back up the current JAR/config/database, stage one artifact only, restart in a planned window, and confirm the startup log.
+
+## Roadmap discipline
+
+Arcana is intentionally being built in vertical slices. The active affinity/profile/combat core is testable now; mines, traders and equipment will be added as gameplay modules with their own tests, claim checks and balance validation. This keeps a large progression system from becoming a loose collection of overpowered items.
+
+## License and authorship
+
+MIT License. Created for DrakesCraft by **JackStar**.
