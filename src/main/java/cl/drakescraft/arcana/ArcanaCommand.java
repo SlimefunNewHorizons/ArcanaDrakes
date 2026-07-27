@@ -36,15 +36,16 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean info(Player player, ArcanaProfile profile) {
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.message("&dAfinidad: &f" + profile.affinity().displayName() + "&d. &7Luz y Sombra se desbloquean como disciplinas avanzadas.")));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.message("&dAfinidad: &f" + profile.affinity().displayName() + "&d. Origen: &f" + profile.origin().displayName() + "&d. Rango: &f" + profile.rank().displayName() + "&d. Sigilos: &f" + profile.sigils())));
         return true;
     }
     private boolean book(Player player, ArcanaProfile profile) {
         ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta meta = (BookMeta) item.getItemMeta();
         meta.setTitle("Codice de Arcana"); meta.setAuthor("DrakesCraft");
-        meta.addPages(Component.text("EL CODICE\n\nTu afinidad primaria: " + profile.affinity().displayName() + "\n\nUsa /arcana cast pulso o /arcana cast dominio.\n\nLos dominios son visuales, no rompen bloques y solo afectan criaturas hostiles."),
-            Component.text("DISCIPLINAS\n\nLuz y Sombra llegan como rutas avanzadas. La afinidad primaria se asigna una vez; el staff puede corregirla con trazabilidad."));
+        meta.addPages(Component.text("EL CODICE\n\nAfinidad: " + profile.affinity().displayName() + "\nOrigen: " + profile.origin().displayName() + "\nRango: " + profile.rank().displayName() + "\n\nUsa /arcana cast pulso o /arcana cast dominio."),
+            Component.text("PROGRESION\n\nLas Minas Arcanas entregan experiencia y Sigilos. Los rangos abren tradeos, mejoras y equipo difícil de conseguir sin reemplazar Slimefun."),
+            Component.text("DISCIPLINAS\n\nLuz y Sombra son rutas avanzadas. La afinidad primaria se asigna una vez; el staff puede corregirla con trazabilidad."));
         item.setItemMeta(meta); player.getInventory().addItem(item); return true;
     }
     private boolean cast(Player player, ArcanaProfile profile, String spell) {
@@ -62,7 +63,8 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
         if (target == null) { staff.sendMessage(ChatColor.RED + "Jugador no conectado."); return true; }
         Affinity affinity;
         try { affinity = Affinity.valueOf(requested.toUpperCase(Locale.ROOT)); } catch (IllegalArgumentException invalid) { staff.sendMessage(ChatColor.RED + "Afinidad inválida."); return true; }
-        repository.save(new ArcanaProfile(target.getUniqueId(), affinity));
+        ArcanaProfile prior = repository.findOrAssign(target.getUniqueId());
+        repository.save(new ArcanaProfile(target.getUniqueId(), affinity, ArcaneOrigin.randomFor(affinity), prior.experience(), prior.sigils()));
         staff.sendMessage(ChatColor.GREEN + "Afinidad actualizada.");
         target.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.message("&dEl staff ajustó tu afinidad a &f" + affinity.displayName() + "&d.")));
         return true;

@@ -12,4 +12,11 @@ class AffinityTest {
             assertTrue(EnumSet.allOf(Affinity.class).contains(Affinity.random()));
         }
     }
+
+    @Test
+    void everyPrimaryAffinityHasACompatibleOrigin() {
+        for (Affinity affinity : Affinity.values()) {
+            assertTrue(ArcaneOrigin.randomFor(affinity).affinity() == affinity);
+        }
+    }
 }

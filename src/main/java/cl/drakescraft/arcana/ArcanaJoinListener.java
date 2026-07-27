@@ -19,7 +19,7 @@ final class ArcanaJoinListener implements Listener {
             ArcanaProfile profile = repository.findOrAssign(event.getPlayer().getUniqueId());
             if (!newProfile) return;
             event.getPlayer().spawnParticle(Particle.DUST, event.getPlayer().getLocation().add(0, 1, 0), 42, .45, .65, .45, 0, new Particle.DustOptions(profile.affinity().color(), 1.35F));
-            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.message("&dLa afinidad te ha elegido: &f" + profile.affinity().displayName() + "&d. Consulta &f/arcana info&d.")));
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.message("&dLa afinidad te ha elegido: &f" + profile.affinity().displayName() + "&d. Tu origen es &f" + profile.origin().displayName() + "&d. Consulta &f/arcana info&d.")));
         } catch (SQLException exception) {
             plugin.getLogger().warning("No se pudo asignar afinidad a " + event.getPlayer().getUniqueId() + ": " + exception.getMessage());
         }
