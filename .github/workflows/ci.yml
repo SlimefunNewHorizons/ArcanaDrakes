@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Compilar y ejecutar pruebas
+        run: mvn -B -ntp clean verify
+
+      - name: Validar artefacto Paper
+        shell: bash
+        run: |
+          JAR=$(find target -maxdepth 1 -type f -name 'DrakesArcana-*.jar' ! -name 'original-*' | head -n 1)
+          test -n "$JAR"
+          jar tf "$JAR" | grep -qx 'plugin.yml'
+          jar tf "$JAR" | grep -qx 'cl/drakescraft/arcana/DrakesArcanaPlugin.class'
+
+      - name: Publicar JAR validado
+        uses: actions/upload-artifact@v4
+        with:
+          name: DrakesArcana
+          path: target/DrakesArcana-*.jar
+          if-no-files-found: error
