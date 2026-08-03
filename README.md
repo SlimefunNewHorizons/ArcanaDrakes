@@ -42,7 +42,7 @@ Origins are a gameplay identity, not a permanent creature disguise. **Light** an
 | Pulse | Short-range elemental projectile with particles, hit feedback and a configurable cooldown. |
 | Domain | An eight-second area ultimate with a global concurrency budget, telegraph circle, sound and configurable cooldown. |
 | Spirituality | `/arcana meditate` grants bounded Arcana Essence, experience and Sigils; `/arcana spirit` explains the active resonance. |
-| Boss compatibility | Offensive spells are permitted in Odysseia's `boss_arena` when enabled in configuration. |
+| Boss compatibility | Offensive spells are permitted in `drakes_bosses` through DrakesBosses when enabled in configuration. |
 | Ranks | Public ladder: Awakening, Explorer, Catalyst, Vanguard, Ascended and Archon. |
 | Mines, traders and gear | Configuration contract and progression policy are present; the related gameplay modules are expanded incrementally rather than shipped as untested endgame content. |
 
@@ -66,7 +66,7 @@ Arcana spirituality is a bridge between an elemental identity and a player's div
 
 1. **Meditation**: `/arcana meditate` is a cooldown-bound ritual that grants Arcana-only Essence, experience and Sigils. It creates an enchantment effect and sound, but no blocks, entities, containers or claim changes.
 2. **Patron resonance**: when the optional `DiosesDrakes` public service is available, Arcana reads the selected patron and current favor. A compatible affinity/patron pairing applies the modest multiplier configured under `spirituality.resonance`.
-3. **No favor minting**: Arcana never writes to the DiosesDrakes database, awards divine favor, spends favor, or changes a patron. Bosses and Convergence remain DiosesDrakes/Odysseia territory.
+3. **No favor minting**: Arcana never writes to the DiosesDrakes database, awards divine favor, spends favor, or changes a patron. Bosses remain DrakesBosses territory and Convergence remains DiosesDrakes territory.
 4. **Graceful fallback**: if DiosesDrakes is missing, disabled, or has no selected patron for a player, meditation remains available at its base reward.
 
 Compatibility is intentionally data-driven. Server operators can map any deity to any primary affinity in `config.yml` without compiling Arcana again.
@@ -76,7 +76,7 @@ Compatibility is intentionally data-driven. Server operators can map any deity t
 Arcana damage is intentionally conservative:
 
 - By default, it targets monsters only.
-- It is active only in `world` and Odysseia's `boss_arena`.
+- It is active only in `world` and DrakesBosses' `drakes_bosses`.
 - Player-versus-player Arcana is disabled.
 - Domains have duration, cooldown and global concurrency limits.
 - Visual effects do not alter blocks, containers, machines, claims or protection flags.
@@ -96,13 +96,13 @@ The main operational file is `plugins/DrakesArcana/config.yml`. It groups the va
 | `mines` | Mine world, regeneration cadence, reward rates and safe ore palette. |
 | `traders` | Sigil trader policy and refresh cadence. |
 | `equipment` | Rank gates and material-only crafting tiers. |
-| `integrations` | Odysseia, DiosesDrakes, AuraSkills, ElementManipulation and protection bridges. |
+| `integrations` | DrakesBosses, DiosesDrakes, AuraSkills, ElementManipulation and protection bridges. |
 
 Edit the values, retain YAML indentation, then restart during a maintenance window. A configuration reload command can be added once every subsystem owns safe reload semantics; until then, a restart avoids half-reloaded gameplay state.
 
 ## Integrations
 
-- **Odysseia**: `boss_arena` is a sanctioned combat world for bosses and Arcana effects.
+- **DrakesBosses**: `drakes_bosses` is a sanctioned combat world for bosses and Arcana effects.
 - **DiosesDrakes**: divine lore and blessings may enrich Arcana through an optional API, never a hard boot dependency.
 - **AuraSkills**: remains the base-stat system. Arcana does not duplicate AuraSkills experience.
 - **ElementManipulation**: stays an independent Slimefun addon and implementation reference; Arcana does not copy its item catalog.

@@ -15,7 +15,7 @@ profiles:
 
 combat:
   # Arcana remains PvE-only until a deliberately configured divine PvP area exists.
-  offensive-worlds: [world, boss_arena]
+  offensive-worlds: [world, drakes_bosses]
   allow-player-vs-player: false
   monsters-only: true
   respect-claims: true
@@ -110,9 +110,9 @@ equipment:
       base-material: NETHERITE
 
 integrations:
-  odysseia:
+  drakesbosses:
     enabled: true
-    allow-boss-arena: true
+    allow-boss-world: true
   dioses-drakes:
     enabled: true
   aura-skills:
@@ -128,7 +128,7 @@ integrations:
 
 # Legacy aliases retained for older generated configs. New installs use combat.*.
 worlds:
-  offensive-enabled: [world, boss_arena]
+  offensive-enabled: [world, drakes_bosses]
   player-vs-player: false
 messages:
   prefix: '&8[&dArcana&8] '

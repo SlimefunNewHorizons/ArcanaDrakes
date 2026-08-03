@@ -68,7 +68,7 @@ final class ArcanaGuideMenu implements Listener {
             )));
             inventory.setItem(16, item(Material.SHIELD, "Where spells work", List.of(
                     "PvE spells are enabled only in configured worlds.",
-                    "boss_arena is the sanctioned Odysseia boss location.",
+                    "drakes_bosses is the sanctioned DrakesBosses arena world.",
                     "Player versus player Arcana is disabled by default.",
                     "Claims and protection rules remain authoritative."
             )));
@@ -76,7 +76,7 @@ final class ArcanaGuideMenu implements Listener {
                     "1. Read your identity above.",
                     "2. Meditate when your spirit is ready.",
                     "3. Practice Pulse against monsters in an allowed world.",
-                    "4. Enter boss_arena only through the approved boss flow."
+                    "4. Enter drakes_bosses only through /bosswarp."
             )));
             inventory.setItem(30, item(Material.BOOK, "Useful commands", List.of(
                     "/arcana opens this guide.",
@@ -86,7 +86,7 @@ final class ArcanaGuideMenu implements Listener {
             )));
             inventory.setItem(32, item(Material.LIGHTNING_ROD, "Integration boundaries", List.of(
                     "DiosesDrakes supplies optional patron resonance.",
-                    "Odysseia supplies boss_arena.",
+                    "DrakesBosses supplies the arena world.",
                     "ElementManipulation stays independent.",
                     "No integration bypasses protections or duplicates XP."
             )));
