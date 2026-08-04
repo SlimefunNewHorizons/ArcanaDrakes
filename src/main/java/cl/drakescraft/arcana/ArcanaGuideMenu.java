@@ -48,7 +48,8 @@ final class ArcanaGuideMenu implements Listener {
             inventory.setItem(10, item(Material.FIRE_CHARGE, "Elemental magic", List.of(
                     "Pulse is a short PvE spell with a cooldown.",
                     "Domain is an area ultimate with a global limit.",
-                    "Use: /arcana cast pulse | /arcana cast domain",
+                    "Catalizador: clic derecho usa Pulso.",
+                    "Agachado usa Dominio; cambio de mano rota alterna la seleccion.",
                     "",
                     "Effects never break, place or move blocks."
             )));

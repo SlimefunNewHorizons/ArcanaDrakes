@@ -17,6 +17,7 @@ final class ArcanaJoinListener implements Listener {
         try {
             boolean newProfile = repository.find(event.getPlayer().getUniqueId()).isEmpty();
             ArcanaProfile profile = repository.findOrAssign(event.getPlayer().getUniqueId());
+            plugin.catalysts().giveIfMissing(event.getPlayer());
             if (!newProfile) return;
             event.getPlayer().spawnParticle(Particle.DUST, event.getPlayer().getLocation().add(0, 1, 0), 42, .45, .65, .45, 0, new Particle.DustOptions(profile.affinity().color(), 1.35F));
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.message("&dLa afinidad te ha elegido: &f" + profile.affinity().displayName() + "&d. Tu origen es &f" + profile.origin().displayName() + "&d. Abre &f/arcana&d para ver tu guía.")));

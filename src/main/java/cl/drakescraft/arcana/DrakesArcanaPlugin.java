@@ -10,6 +10,7 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
     private DivineBridge divine;
     private SpiritualityService spirituality;
     private ArcanaGuideMenu guide;
+    private ArcanaCatalystListener catalysts;
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -22,10 +23,12 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
         divine = new DivineBridge(this);
         spirituality = new SpiritualityService(this, divine);
         guide = new ArcanaGuideMenu(this, repository, divine, spirituality);
+        catalysts = new ArcanaCatalystListener(this, repository, effects);
         ArcanaCommand command = new ArcanaCommand(this, repository, effects, spirituality, divine, guide);
         Objects.requireNonNull(getCommand("arcana")).setExecutor(command);
         Objects.requireNonNull(getCommand("arcana")).setTabCompleter(command);
         getServer().getPluginManager().registerEvents(new ArcanaJoinListener(this, repository), this);
+        getServer().getPluginManager().registerEvents(catalysts, this);
         getServer().getPluginManager().registerEvents(guide, this);
         getLogger().info("DrakesArcana ready: affinities, codex, safe domains and spirituality.");
     }
@@ -36,4 +39,6 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
     }
 
     String message(String text) { return getConfig().getString("messages.prefix", "&8[&dArcana&8] ") + text; }
+
+    ArcanaCatalystListener catalysts() { return catalysts; }
 }

@@ -44,11 +44,11 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
             if (args.length == 0 || args[0].equalsIgnoreCase("guide") || args[0].equalsIgnoreCase("menu")) { guide.open(player); return true; }
             if (args[0].equalsIgnoreCase("info")) return info(player, profile);
             if (args[0].equalsIgnoreCase("book")) return book(player, profile);
+            if (args[0].equalsIgnoreCase("catalyst") || args[0].equalsIgnoreCase("foco")) return catalyst(player);
             if (args[0].equalsIgnoreCase("spirit")) return spirit(player, profile);
             if (args[0].equalsIgnoreCase("meditate")) return meditate(player, profile);
-            if (args[0].equalsIgnoreCase("cast") && args.length >= 2) return cast(player, profile, args[1]);
             if (args[0].equalsIgnoreCase("staff") && args.length >= 4 && args[1].equalsIgnoreCase("set")) return setAffinity(player, args[2], args[3]);
-            player.sendMessage(colour(plugin.message("&f/arcana&7 opens the guide. &f/arcana info&7, &f/arcana spirit&7, &f/arcana meditate&7, &f/arcana book&7, &f/arcana cast <pulse|domain>")));
+            player.sendMessage(colour(plugin.message("&f/arcana&7 abre la guia. &f/arcana info&7, &f/arcana spirit&7, &f/arcana meditate&7, &f/arcana book&7 y &f/arcana catalyst&7 recupera tu Catalizador.")));
         } catch (SQLException exception) {
             player.sendMessage(ChatColor.RED + "Arcana could not read your profile.");
             plugin.getLogger().warning(exception.getMessage());
@@ -90,7 +90,7 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
         meta.setTitle("Arcana Codex");
         meta.setAuthor("DrakesCraft");
         meta.addPages(
-                Component.text("THE CODEX\n\nAffinity: " + profile.affinity().displayName() + "\nOrigin: " + profile.origin().displayName() + "\nRank: " + profile.rank().displayName() + "\n\nUse /arcana cast pulse or /arcana cast domain."),
+                Component.text("CODICE ARCANO\n\nAfinidad: " + profile.affinity().displayName() + "\nOrigen: " + profile.origin().displayName() + "\nRango: " + profile.rank().displayName() + "\n\nUsa el Catalizador Arcano: clic derecho para Pulso, agachado para Dominio y cambio de mano para alternar."),
                 Component.text("PROGRESSION\n\nArcane mines grant experience and Sigils. Ranks open difficult upgrades without replacing Slimefun endgame."),
                 Component.text("SPIRIT\n\nUse /arcana meditate to gain Essence. A compatible DiosesDrakes patron improves resonance using existing favor; Arcana never creates divine favor."),
                 Component.text("DISCIPLINES\n\nLight and Shadow are advanced paths. Your primary affinity is assigned once; staff corrections are traceable."));
@@ -99,13 +99,9 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private boolean cast(Player player, ArcanaProfile profile, String spell) {
-        boolean cast = switch (spell.toLowerCase(Locale.ROOT)) {
-            case "pulso", "pulse" -> effects.castPulse(player, profile.affinity());
-            case "dominio", "domain" -> effects.castDomain(player, profile.affinity());
-            default -> false;
-        };
-        player.sendMessage(colour(plugin.message(cast ? "&dYour affinity answers." : "&7You cannot use that ability here, it is on cooldown, or the domain limit was reached.")));
+    private boolean catalyst(Player player) {
+        plugin.catalysts().giveIfMissing(player);
+        player.sendMessage(colour(plugin.message("&dTu Catalizador Arcano esta listo.")));
         return true;
     }
 
@@ -124,8 +120,7 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        if (args.length == 1) return filter(args[0], List.of("guide", "info", "spirit", "meditate", "book", "cast", "staff"));
-        if (args.length == 2 && args[0].equalsIgnoreCase("cast")) return filter(args[1], List.of("pulse", "domain"));
+        if (args.length == 1) return filter(args[0], List.of("guide", "info", "spirit", "meditate", "book", "catalyst", "staff"));
         if (args.length == 2 && args[0].equalsIgnoreCase("staff")) return filter(args[1], List.of("set"));
         if (args.length == 3 && args[0].equalsIgnoreCase("staff")) return filter(args[2], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
         if (args.length == 4 && args[0].equalsIgnoreCase("staff")) return filter(args[3], Stream.of(Affinity.values()).map(value -> value.name().toLowerCase(Locale.ROOT)).toList());
