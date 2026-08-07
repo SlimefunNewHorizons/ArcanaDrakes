@@ -19,6 +19,7 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
         } catch (SQLException exception) {
             throw new IllegalStateException("No se pudo abrir la base de datos de Arcana", exception);
         }
+        repository.chaosChance(getConfig().getDouble("affinities.chaos-chance", 0.02D));
         effects = new ArcanaEffects(this);
         divine = new DivineBridge(this);
         spirituality = new SpiritualityService(this, divine);

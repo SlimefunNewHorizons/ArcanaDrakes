@@ -28,13 +28,28 @@ combat:
     radius: 7.0
     damage-per-tick: 0.7
 
+affinities:
+  # Probabilidad de que una cuenta nueva salga con Caos, de 0 a 1.
+  # Caos no entra en el reparto normal de las seis escuelas: si saliera una de cada siete, la
+  # afinidad mas fuerte del servidor seria tambien la mas comun. 0.02 = una de cada cincuenta.
+  chaos-chance: 0.02
+
 effects:
   maximum-concurrent-domains: 6
   pulse-cooldown-seconds: 20
+  pulse-damage: 4.0
   domain-cooldown-seconds: 180
   domain-duration-seconds: 8
   particles-per-pulse-step: 4
   domain-points: 28
+  # Lo que hace distinto al Caos. Comparte cooldowns con el resto: pega mas fuerte, no mas seguido.
+  chaos:
+    pulse-damage-multiplier: 1.75
+    # El rayo no se gasta en el primer cuerpo: atraviesa hasta tres.
+    pulse-chains: 3
+    domain-radius: 11.0
+    domain-damage: 1.6
+    domain-duration-multiplier: 2
 
 progression:
   # Canonical tuning values for the public ladder and future mine/quest rewards.
@@ -72,6 +87,8 @@ spirituality:
       WATER: [POSEIDON, OCEANUS, TETHYS, ISIS, BASTET]
       ICE: [SELENE, MORPHEUS, ODIN, ANUBIS, MORRIGAN]
       ELECTRO: [ZEUS, THOR, TYR, HORUS, LUGH]
+      # Caos resuena solo con los dioses que rompen el orden establecido.
+      CHAOS: [SET, LOKI, ERIS, NYX, APEP, HADES]
 
 mines:
   enabled: true

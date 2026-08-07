@@ -10,7 +10,9 @@ public enum ArcaneOrigin {
     BREEZE(Affinity.AIR, "Breeze"), PHANTOM(Affinity.AIR, "Phantom"),
     GUARDIAN(Affinity.WATER, "Guardián marino"), DROWNED(Affinity.WATER, "Ahogado"),
     STRAY(Affinity.ICE, "Stray"), SNOW_GUARDIAN(Affinity.ICE, "Guardián de nieve"),
-    ENDER_WALKER(Affinity.ELECTRO, "Caminante Ender"), STORM_CALLER(Affinity.ELECTRO, "Invocador de tormentas");
+    ENDER_WALKER(Affinity.ELECTRO, "Caminante Ender"), STORM_CALLER(Affinity.ELECTRO, "Invocador de tormentas"),
+    // Chaos archetypes. Only reachable through the rare roll, never through a primary school.
+    VOID_TOUCHED(Affinity.CHAOS, "Tocado por el Vacío"), WITHER_BORN(Affinity.CHAOS, "Nacido del Wither");
 
     private final Affinity affinity;
     private final String displayName;

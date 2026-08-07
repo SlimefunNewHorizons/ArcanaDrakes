@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -12,6 +13,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -29,15 +32,23 @@ final class ArcanaEffects {
         Vector direction = origin.getDirection().normalize().multiply(.55D);
         Location point = origin.clone();
         Particle.DustOptions dust = new Particle.DustOptions(affinity.color(), 1.3F);
+        double damage = plugin.getConfig().getDouble("effects.pulse-damage", 4.0D);
+        // Chaos hits harder and, unlike every other school, does not stop at the first body.
+        if (affinity.rare()) damage *= plugin.getConfig().getDouble("effects.chaos.pulse-damage-multiplier", 1.75D);
+        int remainingChains = affinity.rare() ? Math.max(1, plugin.getConfig().getInt("effects.chaos.pulse-chains", 3)) : 1;
+
         for (int step = 0; step < 18; step++) {
             point.add(direction);
             player.getWorld().spawnParticle(Particle.DUST, point, 4, .08D, .08D, .08D, 0, dust);
             for (LivingEntity target : nearbyMonsters(point, 1.2D)) {
-                target.damage(4.0D, player);
+                target.damage(damage, player);
                 target.setVelocity(target.getVelocity().add(direction.clone().normalize().multiply(.32D)).setY(.14D));
                 player.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 12, .25D, .35D, .25D, .08D);
                 player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, .45F, 1.6F);
-                return true;
+                if (--remainingChains <= 0) return true;
+                // Chaos keeps travelling: the bolt is spent on the body only for the other schools.
+                player.getWorld().spawnParticle(Particle.WITCH, target.getLocation().add(0, 1, 0), 20, .4D, .5D, .4D, .05D);
+                break;
             }
             if (!point.getBlock().isPassable()) break;
         }
@@ -50,8 +61,13 @@ final class ArcanaEffects {
         if (activeDomains >= plugin.getConfig().getInt("effects.maximum-concurrent-domains", 6)) return false;
         activeDomains++;
         final Location center = player.getLocation().clone();
-        final int maxTicks = (int) plugin.getConfig().getLong("effects.domain-duration-seconds", 8) * 20;
+        final boolean chaos = affinity.rare();
+        final int maxTicks = (int) plugin.getConfig().getLong("effects.domain-duration-seconds", 8)
+                * (chaos ? plugin.getConfig().getInt("effects.chaos.domain-duration-multiplier", 2) : 1) * 20;
         final Particle.DustOptions dust = new Particle.DustOptions(affinity.color(), 1.7F);
+        // A wider ring and a heavier tick, but still only against monsters and still touching no blocks.
+        final double radius = chaos ? plugin.getConfig().getDouble("effects.chaos.domain-radius", 11.0D) : 7.0D;
+        final double tickDamage = chaos ? plugin.getConfig().getDouble("effects.chaos.domain-damage", 1.6D) : .7D;
         new BukkitRunnable() {
             private int ticks;
             @Override public void run() {
@@ -60,17 +76,19 @@ final class ArcanaEffects {
                     cancel();
                     return;
                 }
-                double radius = 7.0D;
                 for (int index = 0; index < 28; index++) {
                     double angle = (Math.PI * 2D * index / 28D) + (ticks * .1D);
                     Location point = center.clone().add(Math.cos(angle) * radius, .15D + Math.sin(ticks * .2D) * .25D, Math.sin(angle) * radius);
                     center.getWorld().spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, dust);
                 }
                 for (LivingEntity target : nearbyMonsters(center, radius)) {
-                    target.damage(.7D, player);
+                    target.damage(tickDamage, player);
                     target.setVelocity(target.getVelocity().add(target.getLocation().toVector().subtract(center.toVector()).normalize().multiply(.04D)));
+                    // Chaos is unpredictable by definition: every second it throws a different curse
+                    // at whatever is inside. Only on monsters, and only effects that wear off.
+                    if (chaos && ticks % 20 == 0) target.addPotionEffect(randomCurse());
                 }
-                if (ticks % 20 == 0) center.getWorld().playSound(center, Sound.BLOCK_BEACON_AMBIENT, .7F, .8F);
+                if (ticks % 20 == 0) center.getWorld().playSound(center, chaos ? Sound.ENTITY_WITHER_AMBIENT : Sound.BLOCK_BEACON_AMBIENT, .7F, .8F);
                 ticks += 4;
             }
         }.runTaskTimer(plugin, 0L, 4L);
@@ -91,6 +109,21 @@ final class ArcanaEffects {
         cooldowns.put(key, now + seconds * 1000L);
         return true;
     }
+    /**
+     * One of the Chaos domain's curses, picked at random.
+     *
+     * All of them expire on their own and none is instant death: a domain that could simply delete
+     * whatever walks in would make every other school pointless, which is the opposite of the idea.
+     */
+    private static PotionEffect randomCurse() {
+        PotionEffectType[] curses = {
+            PotionEffectType.SLOWNESS, PotionEffectType.WEAKNESS, PotionEffectType.BLINDNESS,
+            PotionEffectType.WITHER, PotionEffectType.MINING_FATIGUE, PotionEffectType.NAUSEA
+        };
+        PotionEffectType curse = curses[ThreadLocalRandom.current().nextInt(curses.length)];
+        return new PotionEffect(curse, 60, ThreadLocalRandom.current().nextInt(2), true, true);
+    }
+
     private static Collection<LivingEntity> nearbyMonsters(Location location, double radius) {
         return location.getWorld().getNearbyLivingEntities(location, radius, radius, radius, entity -> entity instanceof Monster && !entity.isDead());
     }

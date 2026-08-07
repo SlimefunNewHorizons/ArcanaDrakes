@@ -13,6 +13,8 @@ import java.util.UUID;
 /** Small SQLite store; player affinity survives restarts without persisting player names. */
 final class ArcanaRepository implements AutoCloseable {
     private final Connection connection;
+    /** Chance of Chaos on a first join. Settable so a config reload takes effect without a restart. */
+    private double chaosChance;
 
     ArcanaRepository(File dataFolder) throws SQLException {
         connection = DriverManager.getConnection("jdbc:sqlite:" + new File(dataFolder, "arcana.db").getAbsolutePath());
@@ -24,6 +26,8 @@ final class ArcanaRepository implements AutoCloseable {
             ensureColumn(statement, "spirit", "INTEGER NOT NULL DEFAULT 0");
         }
     }
+
+    void chaosChance(double chance) { this.chaosChance = chance; }
 
     Optional<ArcanaProfile> find(UUID playerId) throws SQLException {
         try (PreparedStatement query = connection.prepareStatement("SELECT affinity, origin, experience, sigils, spirit FROM arcana_profiles WHERE uuid = ?")) {
@@ -37,7 +41,7 @@ final class ArcanaRepository implements AutoCloseable {
     ArcanaProfile findOrAssign(UUID playerId) throws SQLException {
         Optional<ArcanaProfile> current = find(playerId);
         if (current.isPresent()) return current.get();
-        Affinity affinity = Affinity.random();
+        Affinity affinity = Affinity.roll(chaosChance);
         ArcanaProfile profile = new ArcanaProfile(playerId, affinity, ArcaneOrigin.randomFor(affinity), 0L, 0L, 0L);
         save(profile);
         return profile;
