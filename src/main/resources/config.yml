@@ -16,8 +16,8 @@ profiles:
 combat:
   # Arcana remains PvE-only until a deliberately configured divine PvP area exists.
   offensive-worlds: [world, drakes_bosses]
-  allow-player-vs-player: false
-  monsters-only: true
+  allow-player-vs-player: true
+  monsters-only: false
   respect-claims: true
   respect-worldguard: true
   pulse:

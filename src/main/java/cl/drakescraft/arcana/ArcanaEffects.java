@@ -18,7 +18,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-/** Visual combat effects are bounded, modify no blocks, and never damage players. */
+/**
+ * Los efectos de combate estan acotados y no modifican bloques.
+ *
+ * Si alcanzan a un jugador depende de combat.allow-player-vs-player y, sobre todo, de que el
+ * sitio permita PvP: el dano se entrega con damage(), asi que las protecciones lo cancelan igual
+ * que cancelarian un espadazo.
+ */
 final class ArcanaEffects {
     private final DrakesArcanaPlugin plugin;
     private final Map<String, Long> cooldowns = new HashMap<>();
@@ -40,7 +46,7 @@ final class ArcanaEffects {
         for (int step = 0; step < 18; step++) {
             point.add(direction);
             player.getWorld().spawnParticle(Particle.DUST, point, 4, .08D, .08D, .08D, 0, dust);
-            for (LivingEntity target : nearbyMonsters(point, 1.2D)) {
+            for (LivingEntity target : nearbyTargets(player, point, 1.2D)) {
                 target.damage(damage, player);
                 target.setVelocity(target.getVelocity().add(direction.clone().normalize().multiply(.32D)).setY(.14D));
                 player.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 12, .25D, .35D, .25D, .08D);
@@ -65,7 +71,7 @@ final class ArcanaEffects {
         final int maxTicks = (int) plugin.getConfig().getLong("effects.domain-duration-seconds", 8)
                 * (chaos ? plugin.getConfig().getInt("effects.chaos.domain-duration-multiplier", 2) : 1) * 20;
         final Particle.DustOptions dust = new Particle.DustOptions(affinity.color(), 1.7F);
-        // A wider ring and a heavier tick, but still only against monsters and still touching no blocks.
+        // Anillo mas ancho y tick mas fuerte, sin tocar un solo bloque.
         final double radius = chaos ? plugin.getConfig().getDouble("effects.chaos.domain-radius", 11.0D) : 7.0D;
         final double tickDamage = chaos ? plugin.getConfig().getDouble("effects.chaos.domain-damage", 1.6D) : .7D;
         new BukkitRunnable() {
@@ -81,11 +87,11 @@ final class ArcanaEffects {
                     Location point = center.clone().add(Math.cos(angle) * radius, .15D + Math.sin(ticks * .2D) * .25D, Math.sin(angle) * radius);
                     center.getWorld().spawnParticle(Particle.DUST, point, 1, 0, 0, 0, 0, dust);
                 }
-                for (LivingEntity target : nearbyMonsters(center, radius)) {
+                for (LivingEntity target : nearbyTargets(player, center, radius)) {
                     target.damage(tickDamage, player);
                     target.setVelocity(target.getVelocity().add(target.getLocation().toVector().subtract(center.toVector()).normalize().multiply(.04D)));
-                    // Chaos is unpredictable by definition: every second it throws a different curse
-                    // at whatever is inside. Only on monsters, and only effects that wear off.
+                    // El caos es impredecible por definicion: cada segundo lanza una maldicion
+                    // distinta a lo que haya dentro. Todas se pasan solas y ninguna mata al instante.
                     if (chaos && ticks % 20 == 0) target.addPotionEffect(randomCurse());
                 }
                 if (ticks % 20 == 0) center.getWorld().playSound(center, chaos ? Sound.ENTITY_WITHER_AMBIENT : Sound.BLOCK_BEACON_AMBIENT, .7F, .8F);
@@ -124,7 +130,46 @@ final class ArcanaEffects {
         return new PotionEffect(curse, 60, ThreadLocalRandom.current().nextInt(2), true, true);
     }
 
-    private static Collection<LivingEntity> nearbyMonsters(Location location, double radius) {
-        return location.getWorld().getNearbyLivingEntities(location, radius, radius, radius, entity -> entity instanceof Monster && !entity.isDead());
+    /**
+     * Lo que un hechizo puede alcanzar en un punto.
+     *
+     * Antes esto solo devolvia monstruos, asi que un hechizo atravesaba a un jugador sin rozarlo y
+     * la magia no servia de nada en PvP. Las opciones allow-player-vs-player y monsters-only ya
+     * estaban en el config pero no las leia nadie, de modo que cambiarlas tampoco hacia nada.
+     *
+     * No se comprueba aqui si el PvP esta permitido en el sitio. De eso se encarga el propio
+     * damage(), que dispara el evento de dano normal: WorldGuard y ProtectionStones lo cancelan
+     * igual que cancelarian un espadazo. Duplicar esa logica aqui seria arriesgarse a que la
+     * magia y el acero acabasen respetando reglas distintas.
+     */
+    private Collection<LivingEntity> nearbyTargets(Player caster, Location location, double radius) {
+        boolean soloMonstruos = plugin.getConfig().getBoolean("combat.monsters-only", false)
+                || !plugin.getConfig().getBoolean("combat.allow-player-vs-player", true);
+
+        return location.getWorld().getNearbyLivingEntities(location, radius, radius, radius, entity -> {
+            if (entity.isDead()) {
+                return false;
+            }
+            if (entity instanceof Monster) {
+                return true;
+            }
+            if (soloMonstruos || !(entity instanceof Player victim)) {
+                return false;
+            }
+            return esObjetivoValido(caster, victim);
+        });
+    }
+
+    /** Descarta al propio lanzador y a quien no deberia recibir un golpe de nadie. */
+    private static boolean esObjetivoValido(Player caster, Player victim) {
+        if (victim.equals(caster) || victim.isInvulnerable()) {
+            return false;
+        }
+        if (victim.getGameMode() == org.bukkit.GameMode.CREATIVE
+                || victim.getGameMode() == org.bukkit.GameMode.SPECTATOR) {
+            return false;
+        }
+        // El staff en vanish no esta ahi para el resto del servidor; tampoco para un hechizo.
+        return !victim.hasMetadata("vanished");
     }
 }
