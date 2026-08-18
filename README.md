@@ -4,6 +4,16 @@
 
 # ArcanaDrakes
 
+> ### 🏰 ¡Únete a la Comunidad Oficial de DrakesCraft!
+> 
+> * 🎮 **IP del Servidor**: `play.drakescraft.net` *(Java 1.21.11 & Bedrock)*
+> * 💬 **Discord Oficial**: [discord.gg/drakescraft](https://discord.gg/rR7FbfCt9Y)
+> * 🌐 **Web & Guía**: [drakescraft.net](https://drakescraft.net) — 🛒 **Tienda**: [tienda.drakescraft.net](https://tienda.drakescraft.net)
+> 
+> *¡Juega con este addon y más de 80 expansiones optimizadas en vivo en nuestra network de supervivencia técnica!*
+
+---
+
 **Elemental progression for DrakesCraft, built for Paper/Purpur 1.21.11.** Arcana gives survival players a parallel path based on exploration, controlled spell spectacle, ranks, sigils, mines, and material progression without turning Slimefun endgame items into shop currency.
 
 <p align="center">
