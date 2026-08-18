@@ -17,6 +17,9 @@
   <rect width="512" height="512" rx="96" fill="url(#halo)"/>
   <rect x="4" y="4" width="504" height="504" rx="92" fill="none" stroke="url(#acG)" stroke-width="6" opacity="0.55"/>
   <g transform="translate(256,248) scale(2.6)">
-<polygon points="0,-28 26,-8 16,24 -16,24 -26,-8" fill="none" stroke="url(#acG)" stroke-width="4"/><circle cx="0" cy="0" r="10" fill="#6366F1"/><circle cx="0" cy="0" r="4" fill="#A5B4FC"/>
+
+    <polygon points="0,-28 26,-8 16,24 -16,24 -26,-8" fill="none" stroke="url(#acG)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="10" fill="#6366F1"/>
+    <circle cx="0" cy="0" r="4" fill="#A5B4FC"/>
   </g>
 </svg>
