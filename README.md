@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/ArcanaDrakes/main/assets/arcana-banner.svg" width="100%" alt="ArcanaDrakes animated banner" />
+  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/DrakesArcana/main/banner.svg" width="100%" alt="ArcanaDrakes animated banner" />
 </p>
 
 # ArcanaDrakes
