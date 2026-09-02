@@ -7,7 +7,7 @@
 > ### 🏰 ¡Únete a la Comunidad Oficial de DrakesCraft!
 > 
 > * 🎮 **IP del Servidor**: `play.drakescraft.cl` *(Java 1.21.11 & Bedrock)*
-> * 💬 **Discord Oficial**: [discord.gg/drakescraft](https://discord.gg/rR7FbfCt9Y)
+> * 💬 **Discord Oficial**: [discord.gg/drakescraft](https://discord.gg/rv3vtXZTk7)
 > * 🌐 **Web & Guía**: [web.drakescraft.cl](https://web.drakescraft.cl) — 🛒 **Tienda**: [web.drakescraft.cl/store](https://web.drakescraft.cl/store.html)
 > 
 > *¡Juega con este addon y más de 80 expansiones optimizadas en vivo en nuestra network de supervivencia técnica!*
@@ -20,6 +20,7 @@
   <img src="https://img.shields.io/badge/Java-21-ea8b23?style=flat-square" alt="Java 21" />
   <img src="https://img.shields.io/badge/Platform-Paper%20%2F%20Purpur%201.21.11-4b8bbe?style=flat-square" alt="Paper Purpur 1.21.11" />
   <img src="https://img.shields.io/badge/Combat-Claim%20safe-8b5cf6?style=flat-square" alt="Claim safe" />
+  <a href="https://reporanker.com/repos/DrakesCraft-Labs/ArcanaDrakes"><img src="https://reporanker.com/badge/DrakesCraft-Labs/ArcanaDrakes" alt="RepoRanker" /></a>
 </p>
 
 ## Design principles
