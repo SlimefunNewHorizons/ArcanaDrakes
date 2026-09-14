@@ -26,15 +26,20 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
     private final SpiritualityService spirituality;
     private final DivineBridge divine;
     private final ArcanaGuideMenu guide;
+    private final ArcanaTranscendenceMenu transcendenceMenu;
+    private final TranscendenceService transcendenceService;
 
     ArcanaCommand(DrakesArcanaPlugin plugin, ArcanaRepository repository, ArcanaEffects effects,
-                  SpiritualityService spirituality, DivineBridge divine, ArcanaGuideMenu guide) {
+                  SpiritualityService spirituality, DivineBridge divine, ArcanaGuideMenu guide,
+                  ArcanaTranscendenceMenu transcendenceMenu, TranscendenceService transcendenceService) {
         this.plugin = plugin;
         this.repository = repository;
         this.effects = effects;
         this.spirituality = spirituality;
         this.divine = divine;
         this.guide = guide;
+        this.transcendenceMenu = transcendenceMenu;
+        this.transcendenceService = transcendenceService;
     }
 
     @Override public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -46,9 +51,11 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("book")) return book(player, profile);
             if (args[0].equalsIgnoreCase("catalyst") || args[0].equalsIgnoreCase("foco")) return catalyst(player);
             if (args[0].equalsIgnoreCase("spirit")) return spirit(player, profile);
-            if (args[0].equalsIgnoreCase("meditate")) return meditate(player, profile);
+            if (args[0].equalsIgnoreCase("meditate") || args[0].equalsIgnoreCase("meditar")) return meditate(player, profile);
+            if (args[0].equalsIgnoreCase("artes") || args[0].equalsIgnoreCase("tecnicas")) { transcendenceMenu.open(player); return true; }
+            if (args[0].equalsIgnoreCase("cast") && args.length >= 2) return cast(player, profile, args[1]);
             if (args[0].equalsIgnoreCase("staff") && args.length >= 4 && args[1].equalsIgnoreCase("set")) return setAffinity(player, args[2], args[3]);
-            player.sendMessage(colour(plugin.message("&f/arcana&7 abre la guia. &f/arcana info&7, &f/arcana spirit&7, &f/arcana meditate&7, &f/arcana book&7 y &f/arcana catalyst&7 recupera tu Catalizador.")));
+            player.sendMessage(colour(plugin.message("&f/arcana&7 abre la guía. &f/arcana artes&7 para técnicas de anime (Dragon Ball, Naruto, One Piece). &f/arcana info&7, &f/arcana meditar&7 y &f/arcana catalyst&7.")));
         } catch (SQLException exception) {
             player.sendMessage(ChatColor.RED + "Arcana could not read your profile.");
             plugin.getLogger().warning(exception.getMessage());
@@ -58,7 +65,11 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
 
     private boolean info(Player player, ArcanaProfile profile) {
         DivineSnapshot snapshot = divine.snapshot(player.getUniqueId());
+        String techName = profile.equippedTechnique() != null && profile.equippedTechnique() != TranscendenceTechnique.NONE
+                ? profile.equippedTechnique().displayName()
+                : "Ninguna (/arcana artes)";
         player.sendMessage(colour(plugin.message("&dAffinity: &f" + profile.affinity().displayName() + "&d. Origin: &f" + profile.origin().displayName() + "&d. Rank: &f" + profile.rank().displayName() + "&d. Sigils: &f" + profile.sigils() + "&d. Essence: &f" + profile.spirit())));
+        player.sendMessage(colour(plugin.message("&bArte Trascendental Equipado: &e" + techName)));
         if (snapshot.hasPatron()) player.sendMessage(colour(plugin.message("&dPatron: &f" + snapshot.godDisplayName() + " &7(" + snapshot.pantheonName() + ") &d| Favor: &f" + snapshot.favor() + "&d. Use &f/arcana spirit&d for resonance.")));
         return true;
     }
@@ -84,24 +95,39 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    private boolean cast(Player player, ArcanaProfile profile, String techniqueArg) {
+        TranscendenceTechnique tech;
+        try {
+            tech = TranscendenceTechnique.valueOf(techniqueArg.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            player.sendMessage(colour(plugin.message("&cTécnica desconocida. Usa &f/arcana artes&c para ver la lista.")));
+            return true;
+        }
+        transcendenceService.execute(player, tech, profile);
+        return true;
+    }
+
     private boolean book(Player player, ArcanaProfile profile) {
         ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta meta = (BookMeta) item.getItemMeta();
-        meta.setTitle("Arcana Codex");
-        meta.setAuthor("DrakesCraft");
-        meta.addPages(
-                Component.text("CODICE ARCANO\n\nAfinidad: " + profile.affinity().displayName() + "\nOrigen: " + profile.origin().displayName() + "\nRango: " + profile.rank().displayName() + "\n\nUsa el Catalizador Arcano: clic derecho para Pulso, agachado para Dominio y cambio de mano para alternar."),
-                Component.text("PROGRESSION\n\nArcane mines grant experience and Sigils. Ranks open difficult upgrades without replacing Slimefun endgame."),
-                Component.text("SPIRIT\n\nUse /arcana meditate to gain Essence. A compatible DiosesDrakes patron improves resonance using existing favor; Arcana never creates divine favor."),
-                Component.text("DISCIPLINES\n\nLight and Shadow are advanced paths. Your primary affinity is assigned once; staff corrections are traceable."));
-        item.setItemMeta(meta);
+        if (meta != null) {
+            meta.setTitle("Arcana Codex");
+            meta.setAuthor("DrakesCraft");
+            meta.addPages(
+                    Component.text("CODICE ARCANO\n\nAfinidad: " + profile.affinity().displayName() + "\nOrigen: " + profile.origin().displayName() + "\nRango: " + profile.rank().displayName() + "\n\nUsa el Catalizador Arcano: clic derecho para modo activo, agachado para Dominio y tecla F (cambiar mano) para alternar entre Pulso, Dominio y Arte Trascendental."),
+                    Component.text("ARTES TRASCENDENTALES\n\nUsa /arcana artes para abrir el menú de disciplinas legendarias:\n\n• Dragon Ball (Ki): Genkidama, Ultra Instinto, Kaioken.\n• Naruto (Chakra): Rasengan, Chidori, Susanoo.\n• One Piece (Haki): Conquistador, Armadura, Gear Second."),
+                    Component.text("MEDITACIÓN Y ESENCIA\n\nUsa /arcana meditar para acumular Esencia Espiritual. Cada técnica consume una porción de Esencia y posee un enfriamiento equilibrado. Un patrón divino afín incrementa tus ganancias de meditación."),
+                    Component.text("PROGRESIÓN Y SEGURIDAD\n\nCada rango desbloquea nuevas técnicas. Las habilidades no destruyen bloques ni interfieren con protecciones de WorldGuard."));
+            item.setItemMeta(meta);
+        }
         player.getInventory().addItem(item);
+        player.sendMessage(colour(plugin.message("&dHas recibido el Códice Arcano.")));
         return true;
     }
 
     private boolean catalyst(Player player) {
         plugin.catalysts().giveIfMissing(player);
-        player.sendMessage(colour(plugin.message("&dTu Catalizador Arcano esta listo.")));
+        player.sendMessage(colour(plugin.message("&dTu Catalizador Arcano está listo.")));
         return true;
     }
 
@@ -113,14 +139,17 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
         try { affinity = Affinity.valueOf(requested.toUpperCase(Locale.ROOT)); }
         catch (IllegalArgumentException invalid) { staff.sendMessage(ChatColor.RED + "Invalid affinity."); return true; }
         ArcanaProfile prior = repository.findOrAssign(target.getUniqueId());
-        repository.save(new ArcanaProfile(target.getUniqueId(), affinity, ArcaneOrigin.randomFor(affinity), prior.experience(), prior.sigils(), prior.spirit()));
+        repository.save(new ArcanaProfile(target.getUniqueId(), affinity, ArcaneOrigin.randomFor(affinity), prior.experience(), prior.sigils(), prior.spirit(), prior.equippedTechnique()));
         staff.sendMessage(ChatColor.GREEN + "Affinity updated.");
         target.sendMessage(colour(plugin.message("&dStaff adjusted your affinity to &f" + affinity.displayName() + "&d.")));
         return true;
     }
 
     @Override public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        if (args.length == 1) return filter(args[0], List.of("guide", "info", "spirit", "meditate", "book", "catalyst", "staff"));
+        if (args.length == 1) return filter(args[0], List.of("guide", "info", "spirit", "meditate", "meditar", "artes", "tecnicas", "cast", "book", "catalyst", "staff"));
+        if (args.length == 2 && args[0].equalsIgnoreCase("cast")) {
+            return filter(args[1], Stream.of(TranscendenceTechnique.values()).filter(t -> t != TranscendenceTechnique.NONE).map(t -> t.name().toLowerCase(Locale.ROOT)).toList());
+        }
         if (args.length == 2 && args[0].equalsIgnoreCase("staff")) return filter(args[1], List.of("set"));
         if (args.length == 3 && args[0].equalsIgnoreCase("staff")) return filter(args[2], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
         if (args.length == 4 && args[0].equalsIgnoreCase("staff")) return filter(args[3], Stream.of(Affinity.values()).map(value -> value.name().toLowerCase(Locale.ROOT)).toList());

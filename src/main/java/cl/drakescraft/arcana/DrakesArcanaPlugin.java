@@ -11,6 +11,8 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
     private SpiritualityService spirituality;
     private ArcanaGuideMenu guide;
     private ArcanaCatalystListener catalysts;
+    private TranscendenceService transcendenceService;
+    private ArcanaTranscendenceMenu transcendenceMenu;
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -24,14 +26,22 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
         divine = new DivineBridge(this);
         spirituality = new SpiritualityService(this, divine);
         guide = new ArcanaGuideMenu(this, repository, divine, spirituality);
-        catalysts = new ArcanaCatalystListener(this, repository, effects);
-        ArcanaCommand command = new ArcanaCommand(this, repository, effects, spirituality, divine, guide);
+
+        transcendenceService = new TranscendenceService(this, repository);
+        transcendenceMenu = new ArcanaTranscendenceMenu(this, repository, transcendenceService);
+        catalysts = new ArcanaCatalystListener(this, repository, effects, transcendenceService);
+
+        ArcanaCommand command = new ArcanaCommand(this, repository, effects, spirituality, divine, guide, transcendenceMenu, transcendenceService);
         Objects.requireNonNull(getCommand("arcana")).setExecutor(command);
         Objects.requireNonNull(getCommand("arcana")).setTabCompleter(command);
+
         getServer().getPluginManager().registerEvents(new ArcanaJoinListener(this, repository), this);
         getServer().getPluginManager().registerEvents(catalysts, this);
         getServer().getPluginManager().registerEvents(guide, this);
-        getLogger().info("DrakesArcana ready: affinities, codex, safe domains and spirituality.");
+        getServer().getPluginManager().registerEvents(transcendenceMenu, this);
+        getServer().getPluginManager().registerEvents(new TranscendenceListener(this, transcendenceService), this);
+
+        getLogger().info("DrakesArcana ready: affinities, codex, safe domains, spirituality & transcendental anime arts (Dragon Ball, Naruto, One Piece).");
     }
 
     @Override public void onDisable() {
@@ -39,7 +49,9 @@ public final class DrakesArcanaPlugin extends JavaPlugin {
         try { repository.close(); } catch (SQLException exception) { getLogger().warning("No se pudo cerrar Arcana SQLite: " + exception.getMessage()); }
     }
 
-    String message(String text) { return getConfig().getString("messages.prefix", "&8[&dArcana&8] ") + text; }
+    public String message(String text) { return getConfig().getString("messages.prefix", "&8[&dArcana&8] ") + text; }
 
-    ArcanaCatalystListener catalysts() { return catalysts; }
+    public ArcanaCatalystListener catalysts() { return catalysts; }
+    public TranscendenceService transcendence() { return transcendenceService; }
+    public ArcanaTranscendenceMenu transcendenceMenu() { return transcendenceMenu; }
 }
