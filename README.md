@@ -132,6 +132,10 @@ The deployable JAR is produced under `target/`. Build success is not deployment 
 
 Arcana is intentionally being built in vertical slices. The active affinity/profile/combat core is testable now; mines, traders and equipment will be added as gameplay modules with their own tests, claim checks and balance validation. This keeps a large progression system from becoming a loose collection of overpowered items.
 
-## License and authorship
+---
 
-MIT License. Created for DrakesCraft by **JackStar**.
+## 📄 License & Intellectual Property
+
+Copyright © 2026 [**JackStar6677-1**](https://github.com/JackStar6677-1) · [**DrakesCraft Labs**](https://github.com/DrakesCraft-Labs). All Rights Reserved.
+
+This software is **Source-Available** for public inspection and technical audit. Redistribution, commercial repackaging, or unauthorized derivative distribution without explicit written permission from the author is strictly prohibited.
