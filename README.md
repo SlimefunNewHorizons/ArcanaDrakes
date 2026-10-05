@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/ArcanaDrakes/main/banner.svg" width="100%" alt="ArcanaDrakes animated banner" />
+  <img src="https://raw.githubusercontent.com/SlimefunNewHorizons/ArcanaDrakes/main/banner.svg" width="100%" alt="ArcanaDrakes animated banner" />
 </p>
 
 # ArcanaDrakes
@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/Java-21-ea8b23?style=flat-square" alt="Java 21" />
   <img src="https://img.shields.io/badge/Platform-Paper%20%2F%20Purpur%201.21.11-4b8bbe?style=flat-square" alt="Paper Purpur 1.21.11" />
   <img src="https://img.shields.io/badge/Combat-Claim%20safe-8b5cf6?style=flat-square" alt="Claim safe" />
-  <a href="https://reporanker.com/repos/DrakesCraft-Labs/ArcanaDrakes"><img src="https://reporanker.com/badge/DrakesCraft-Labs/ArcanaDrakes" alt="RepoRanker" /></a>
+  <a href="https://reporanker.com/repos/SlimefunNewHorizons/ArcanaDrakes"><img src="https://reporanker.com/badge/SlimefunNewHorizons/ArcanaDrakes" alt="RepoRanker" /></a>
 </p>
 
 ## Design principles
@@ -136,6 +136,6 @@ Arcana is intentionally being built in vertical slices. The active affinity/prof
 
 ## 📄 License & Intellectual Property
 
-Copyright © 2026 [**JackStar6677-1**](https://github.com/JackStar6677-1) · [**DrakesCraft Labs**](https://github.com/DrakesCraft-Labs). All Rights Reserved.
+Copyright © 2026 [**JackStar6677-1**](https://github.com/JackStar6677-1) · [**DrakesCraft Labs**](https://github.com/SlimefunNewHorizons). All Rights Reserved.
 
 This software is **Source-Available** for public inspection and technical audit. Redistribution, commercial repackaging, or unauthorized derivative distribution without explicit written permission from the author is strictly prohibited.
