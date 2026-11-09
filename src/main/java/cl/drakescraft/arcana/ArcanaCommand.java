@@ -43,6 +43,7 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (args.length >= 4 && args[0].equalsIgnoreCase("staff") && args[1].equalsIgnoreCase("xp")) return grantExperience(sender, args[2], args[3]);
         if (!(sender instanceof Player player)) { sender.sendMessage("Only players can use Arcana."); return true; }
         try {
             ArcanaProfile profile = repository.findOrAssign(player.getUniqueId());
@@ -131,6 +132,23 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    /** /arcana staff xp <jugador> <n>: consola o staff. Lo usa DrakesRankup al subir de rango. */
+    private boolean grantExperience(CommandSender sender, String targetName, String amount) {
+        if (!sender.hasPermission("drakesarcana.staff")) { sender.sendMessage(ChatColor.RED + "No permission."); return true; }
+        Player target = plugin.getServer().getPlayerExact(targetName);
+        if (target == null) { sender.sendMessage(ChatColor.RED + "Player is not online."); return true; }
+        long xp;
+        try { xp = Long.parseLong(amount); } catch (NumberFormatException invalid) { sender.sendMessage(ChatColor.RED + "Invalid amount."); return true; }
+        if (xp < 1 || xp > 1_000_000) { sender.sendMessage(ChatColor.RED + "Amount must be 1..1000000."); return true; }
+        try {
+            ArcanaProfile prior = repository.findOrAssign(target.getUniqueId());
+            repository.save(new ArcanaProfile(target.getUniqueId(), prior.affinity(), prior.origin(), prior.experience() + xp, prior.sigils(), prior.spirit(), prior.equippedTechnique()));
+        } catch (SQLException exception) { sender.sendMessage(ChatColor.RED + "Arcana could not save the profile."); return true; }
+        sender.sendMessage(ChatColor.GREEN + "+" + xp + " Arcana XP -> " + target.getName());
+        target.sendMessage(colour(plugin.message("&d+" + xp + " Arcana XP por tu ascenso.")));
+        return true;
+    }
+
     private boolean setAffinity(Player staff, String targetName, String requested) throws SQLException {
         if (!staff.hasPermission("drakesarcana.staff")) { staff.sendMessage(ChatColor.RED + "No permission."); return true; }
         Player target = plugin.getServer().getPlayerExact(targetName);
@@ -150,7 +168,7 @@ final class ArcanaCommand implements CommandExecutor, TabCompleter {
         if (args.length == 2 && args[0].equalsIgnoreCase("cast")) {
             return filter(args[1], Stream.of(TranscendenceTechnique.values()).filter(t -> t != TranscendenceTechnique.NONE).map(t -> t.name().toLowerCase(Locale.ROOT)).toList());
         }
-        if (args.length == 2 && args[0].equalsIgnoreCase("staff")) return filter(args[1], List.of("set"));
+        if (args.length == 2 && args[0].equalsIgnoreCase("staff")) return filter(args[1], List.of("set", "xp"));
         if (args.length == 3 && args[0].equalsIgnoreCase("staff")) return filter(args[2], plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
         if (args.length == 4 && args[0].equalsIgnoreCase("staff")) return filter(args[3], Stream.of(Affinity.values()).map(value -> value.name().toLowerCase(Locale.ROOT)).toList());
         return List.of();
